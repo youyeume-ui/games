@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3x3 Sliding Puzzle</title>
+<style>
+  body { font-family: sans-serif; text-align: center; background: #fafafa; }
+  #board { display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; margin: 50px auto; }
+  .tile {
+    width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+    background: #ddd; font-size: 24px; cursor: pointer; border-radius: 6px;
+  }
+  .blank { background: white; border: 1px dashed #aaa; cursor: default; }
+</style>
+</head>
+<body>
+<h2>Sliding Puzzle (3×3)</h2>
+<div id="board"></div>
+
+<script>
+let board = [
+  ['*', 2, 4],
+  ['*', '', '*'],
+  ['*', 3, 1]
+];
+const goal = [
+  ['', 1, 2],
+  [3, 4, '*'],
+  ['*', '*', '*']
+];
+
+const boardDiv = document.getElementById('board');
+function draw() {
+  boardDiv.innerHTML = '';
+  board.flat().forEach((v, i) => {
+    const d = document.createElement('div');
+    d.className = 'tile' + (v === '' ? ' blank' : '');
+    d.textContent = v;
+    d.onclick = () => move(i);
+    boardDiv.appendChild(d);
+  });
+}
+function move(index) {
+  const x = index % 3, y = Math.floor(index / 3);
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+  for (let [dx, dy] of dirs) {
+    const nx = x + dx, ny = y + dy;
+    if (nx>=0 && nx<3 && ny>=0 && ny<3 && board[ny][nx] === '') {
+      [board[ny][nx], board[y][x]] = [board[y][x], board[ny][nx]];
+      draw();
+      checkWin();
+      break;
+    }
+  }
+}
+function checkWin() {
+  if (JSON.stringify(board) === JSON.stringify(goal))
+    setTimeout(()=>alert('🎉 You win!'), 100);
+}
+draw();
+</script>
+</body>
+</html>
